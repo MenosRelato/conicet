@@ -1,0 +1,13 @@
+<Project>
+  <PropertyGroup Condition="'$(CI)' == 'true' and '$(Language)' == 'C#'">
+    <DefineConstants>CI;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+    
+  <PropertyGroup Condition="'$(IsPackable)' == ''">
+    <IsPackable Condition="'$(PackageId)' == ''">false</IsPackable>
+    <IsPackable Condition="'$(PackageId)' != ''">true</IsPackable>
+  </PropertyGroup>
+    
+  <Import Project="Directory.targets" Condition="Exists('Directory.targets')"/>
+  <Import Project="Directory.targets.user" Condition="Exists('Directory.targets.user')" />
+</Project>

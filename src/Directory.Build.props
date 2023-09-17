@@ -1,0 +1,50 @@
+<Project>
+  <PropertyGroup>
+    <RootNamespace>MenosRelato</RootNamespace>
+
+    <CI Condition="'$(CI)' == ''">false</CI>
+    <ContinuousIntegrationBuild>$(CI)</ContinuousIntegrationBuild>
+    <Configuration Condition="'$(Configuration)' == '' and $(CI)">Release</Configuration>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>Latest</LangVersion>
+    <ImplicitUsings>true</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    
+    <NoWarn>NU5105;NU1507;$(NoWarn)</NoWarn>
+    <WarningsAsErrors Condition="$(CI) or '$(Configuration)' == 'Release'">true</WarningsAsErrors>
+    
+    <!-- See https://docs.microsoft.com/en-us/dotnet/core/versions/selection#framework-dependent-apps-roll-forward -->
+    <RollForward>LatestMinor</RollForward>
+
+    <VersionPrefix Condition="$(VersionPrefix) == ''">42.42.42</VersionPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Version" Condition="$(VersionLabel) != ''">
+    <_VersionLabel>$(VersionLabel.Replace('refs/heads/', ''))</_VersionLabel>
+    <_VersionLabel Condition="$(_VersionLabel.Contains('refs/pull/'))">$(VersionLabel.TrimEnd('.0123456789'))</_VersionLabel>
+    <_VersionLabel>$(_VersionLabel.Replace('refs/pull/', 'pr'))</_VersionLabel>
+    <_VersionLabel>$(_VersionLabel.Replace('/merge', ''))</_VersionLabel>
+    <_VersionLabel>$(_VersionLabel.Replace('/', '-'))</_VersionLabel>
+    <VersionSuffix>$(_VersionLabel)</VersionSuffix>
+  </PropertyGroup>
+
+  <ItemGroup Label="ThisAssembly.Project">
+    <ProjectProperty Include="CI" />
+    <ProjectProperty Include="UserSecretsId" />
+    <ProjectProperty Include="Version" />
+    <ProjectProperty Include="VersionPrefix" />
+    <ProjectProperty Include="VersionSuffix" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup>
+    <PackageReference GeneratePathProperty="true" />
+  </ItemDefinitionGroup>
+
+  <Import Project="Directory.props" Condition="Exists('Directory.props')"/>
+  <Import Project="Directory.props.user" Condition="Exists('Directory.props.user')" />
+</Project>

@@ -1,0 +1,27 @@
+[file]
+	url = https://github.com/menosrelato/template
+[file ".gitattributes"]
+	url = https://github.com/menosrelato/template/blob/main/.gitattributes
+	sha = 701b9468774a8124ae07cf9a93d68b02cc71b8ff
+	etag = 7acb32f5fa6d4ccd9c824605a7c2b8538497f0068c165567807d393dcf4d6bb7
+	weak
+[file ".gitignore"]
+	url = https://github.com/menosrelato/template/blob/main/.gitignore
+	sha = 701b9468774a8124ae07cf9a93d68b02cc71b8ff
+	etag = cb12a3e3e89a15acfb27d3eaace5135a6ec3d3fbd1242e4a8e8f9fa646200e5c
+	weak
+[file "license.txt"]
+	url = https://github.com/menosrelato/template/blob/main/license.txt
+	sha = 701b9468774a8124ae07cf9a93d68b02cc71b8ff
+	etag = 78a860295a7cff1a31239972c7249cd824461058731a49169d33396bf3f74a9a
+	weak
+[file "src/Directory.Build.props"]
+	url = https://github.com/menosrelato/template/blob/main/src/Directory.Build.props
+	sha = 701b9468774a8124ae07cf9a93d68b02cc71b8ff
+	etag = 3f3fa3463fb75487916d2fcf0d6dbbc89b656df29e25c63e3ba6d717a64622b4
+	weak
+[file "src/Directory.Build.targets"]
+	url = https://github.com/menosrelato/template/blob/main/src/Directory.Build.targets
+	sha = 701b9468774a8124ae07cf9a93d68b02cc71b8ff
+	etag = df4417fbbd129594e2afed8e6d6c69229e41b55c6b4986e78bd3fd5e68f24a99
+	weak
