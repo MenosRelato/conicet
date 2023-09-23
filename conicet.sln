@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34112.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "conicet", "src\conicet\conicet.csproj", "{23B86024-C18F-44B7-A7DF-E952829C4337}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "src\tests\tests.csproj", "{6745F359-6922-4589-959E-9690525A8401}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9F04A1D-B17F-49A5-B6B8-840D7F40A175}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+		readme.md = readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23B86024-C18F-44B7-A7DF-E952829C4337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B86024-C18F-44B7-A7DF-E952829C4337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23B86024-C18F-44B7-A7DF-E952829C4337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23B86024-C18F-44B7-A7DF-E952829C4337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6745F359-6922-4589-959E-9690525A8401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6745F359-6922-4589-959E-9690525A8401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6745F359-6922-4589-959E-9690525A8401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6745F359-6922-4589-959E-9690525A8401}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC161E45-1843-457A-AA28-17F6DAE21FD1}
+	EndGlobalSection
+EndGlobal

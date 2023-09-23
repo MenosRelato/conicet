@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <UserSecretsId>2572ffc6-a53a-41c9-ba7b-0551db9e057f</UserSecretsId>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>dotnet-conicet</PackageId>
+    <ToolCommandName>conicet</ToolCommandName>
+    <DotNetVersion>8.0.0-rc.1.23419.4</DotNetVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(DotNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(DotNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="$(DotNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DotNetVersion)" />
+    <PackageReference Include="Polly" Version="8.0.0-beta.2" />
+    <PackageReference Include="SharpYaml" Version="2.1.0" />
+    <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    <PackageReference Include="Spectre.Console.Analyzer" Version="0.47.0" PrivateAssets="all" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.47.0" />
+    <PackageReference Include="Spectre.Console.Json" Version="0.47.0" />
+    <PackageReference Include="ThisAssembly.Project" Version="1.4.1" PrivateAssets="all" />
+    <PackageReference Include="Devlooped.Web" Version="1.2.0" />
+    <PackageReference Include="MessagePack" Version="2.5.124" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.5.124" PrivateAssets="all" />
+    <PackageReference Include="Tomlyn" Version="0.16.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectProperty Include="ToolCommandName" />
+  </ItemGroup>
+
+</Project>

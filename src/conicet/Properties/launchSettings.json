@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "conicet": {
+      "commandName": "Project",
+      "commandLineArgs": "scrap"
+    }
+  }
+}
