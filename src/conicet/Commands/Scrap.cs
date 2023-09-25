@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using Devlooped.Web;
 using Polly;
@@ -10,20 +11,39 @@ using static Spectre.Console.AnsiConsole;
 namespace MenosRelato.Commands;
 
 [Description("Descarga articulos por area de conocimiento")]
-public class Scrap(ResiliencePipeline resilience) : AsyncCommand
+public partial class Scrap(ResiliencePipeline resilience) : AsyncCommand
 {
-    record Meta(string Name, string Content, string? Lang);
-    record Item(string Handle, DateOnly Date, List<Meta> Metadata);
+    [JsonSourceGenerationOptions(WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+    [JsonSerializable(typeof(Item))]
+    [JsonSerializable(typeof(Meta))]
+    [JsonSerializable(typeof(Area))]
+    [JsonSerializable(typeof(List<Meta>))]
+    internal partial class ScrapGenerationContext : JsonSerializerContext
+    {
+    }
+
+    public record Area(int Id, string Name);
+    public record Meta(string Name, string Content, string? Lang);
+    public record Item(string Title, string Handle, DateOnly Date, List<Meta> Metadata)
+    {
+        public Area? Area { get; set; }
+    }
 
     public override async Task<int> ExecuteAsync(CommandContext context)
     {
-        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true };
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web) 
+        {
+            TypeInfoResolver = ScrapGenerationContext.Default,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            WriteIndented = true,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        };
 
         using var http = new HttpClient();
         http.BaseAddress = Constants.BaseAddress;
         http.DefaultRequestHeaders.UserAgent.ParseAdd(Constants.UserAgent);
 
-        var doc = await resilience.ExecuteAsync(async x => HtmlDocument.Load(await http.GetStreamAsync("/subject/")));
+        var doc = await resilience.ExecuteAsync(async x => HtmlDocument.Load(await http.GetStreamAsync("/subject/", x)));
         var areas = doc.CssSelectElements("#aspect_conicet_VerArea_list_nivel1 .ds-simple-list-item")
             .Select(x => x.CssSelectElements("span").Select(s => s.Value).ToArray())
             .Where(x => x.Length == 2)
@@ -41,6 +61,7 @@ public class Scrap(ResiliencePipeline resilience) : AsyncCommand
         var selected = Prompt(prompt);
         var area = areas.First(x => selected.StartsWith(x.Title));
         var subject = GetSubject(area.Title);
+
         var page = -1;
 
         var cache = Path.Combine("conicet", "pubs");
@@ -67,8 +88,28 @@ public class Scrap(ResiliencePipeline resilience) : AsyncCommand
                     {
                         var articleFile = Path.Combine(cache, string.Join('-', articleUrl.Split('/').ToArray()[^2..]) + ".json");
                         if (File.Exists(articleFile) &&
-                            JsonSerializer.Deserialize<Publication>(File.ReadAllText(articleFile)) is { } cached)
+                            JsonSerializer.Deserialize<Item>(File.ReadAllText(articleFile), options) is { } cached && 
+                            cached.Metadata?.Count > 0)
                         {
+                            if (cached.Area is null || cached.Title == null)
+                            {
+                                cached = cached with
+                                {
+                                    Area = new Area(subject, area.Title), 
+                                };
+
+                                if ((cached.Metadata.FirstOrDefault(x => x.Name == "DC.title")?.Content ??
+                                    cached.Metadata.FirstOrDefault(x => x.Name == "citation_title")?.Content) is string t)
+                                {
+                                    cached = cached with
+                                    {
+                                        Title = t,
+                                    };
+                                }
+                                
+                                File.WriteAllText(articleFile, JsonSerializer.Serialize(cached, options));
+                            }
+
                             MarkupLine($"[green]✓[/] {articleUrl}");
                             continue;
                         }
@@ -109,7 +150,19 @@ public class Scrap(ResiliencePipeline resilience) : AsyncCommand
                             continue;
                         }
 
-                        var pub = new Item(handle.Content, date, meta);
+                        var title = meta.FirstOrDefault(x => x.Name == "DC.title")?.Content ??
+                            meta.FirstOrDefault(x => x.Name == "citation_title")?.Content;
+
+                        if (title == null)
+                        {
+                            WriteLine($"[red]x[/] {articleUrl} no tiene un titulo valido como 'DC.title' o 'citation_title'");
+                            continue;
+                        }
+
+                        var pub = new Item(title, handle.Content, date, meta)
+                        {
+                            Area = new(subject, area.Title)
+                        };
                         File.WriteAllText(articleFile, JsonSerializer.Serialize(pub, options));
                     }
                 }
