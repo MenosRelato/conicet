@@ -1,0 +1,28 @@
+plugins: 
+  - jekyll-remote-theme
+  
+remote_theme: just-the-docs/just-the-docs@v0.6.1
+exclude: [ 'src/', '*.sln', 'Gemfile*', '*.rsp' ]
+
+ga_tracking: "G-MHF58SREPL"
+
+aux_links_new_tab: true
+aux_links:
+  "GitHub":
+    - "//github.com/MenosRelato/conicet"
+
+callouts:
+  warn:
+    color: yellow
+  info:
+    color: blue
+
+compress_html:
+  ignore:
+    envs: all
+    
+kramdown:
+  parse_block_html: true
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true

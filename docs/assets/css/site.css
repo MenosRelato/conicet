@@ -1,0 +1,27 @@
+/* Copy styles from GH, i.e. https://docs.github.com/en/rest/overview/about-githubs-apis?apiVersion=2022-11-28 */
+
+#toc {
+    position: sticky;
+    float: right;
+    overflow-y: auto;
+    max-width: 200px;
+    padding-top: 16px;
+    padding-left: 24px;
+}
+
+.tag {
+    display: inline-block !important;
+    padding: 0.25em 0.4em !important;
+    font-size: 75% !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    vertical-align: baseline !important;
+    border-radius: 0.25rem !important;
+    background-color: #0083bb !important;
+    color: #fff !important;
+}
+
+.cloud {
+    width: 100%;
+}

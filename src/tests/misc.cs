@@ -1,6 +1,6 @@
 namespace MenosRelato;
 
-public class misc
+public class Misc
 {
     [Fact]
     public void Run()

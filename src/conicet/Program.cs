@@ -6,6 +6,8 @@ using Polly.Retry;
 using Polly;
 using Spectre.Console.Cli;
 using static Spectre.Console.AnsiConsole;
+using Spectre.Console;
+using MenosRelato;
 
 var config = new ConfigurationManager()
     .AddUserSecrets(ThisAssembly.Project.UserSecretsId)
@@ -27,10 +29,16 @@ var services = new ServiceCollection()
                 return ValueTask.CompletedTask;
             },
         })
-        .AddTimeout(TimeSpan.FromSeconds(10))
+        //.AddTimeout(TimeSpan.FromSeconds(20))
         .Build())
     .AddSingleton<IAgentService>(sp => new CachingAgentService(
-        new CloudAgentService(sp.GetRequiredService<IConfiguration>())));
+        new CloudAgentService(sp.GetRequiredService<IConfiguration>())))
+    .AddHttpClient().ConfigureHttpClientDefaults(c => c.ConfigureHttpClient(
+        http =>
+        {
+            http.BaseAddress = Constants.BaseAddress;
+            http.DefaultRequestHeaders.UserAgent.ParseAdd(Constants.UserAgent);
+        }));
 
 var app = new CommandApp(new TypeRegistrar(services));
 // Register the app itself so commands can execute other commands
@@ -40,11 +48,28 @@ app.Configure(config =>
 {
     config.SetApplicationName(ThisAssembly.Project.ToolCommandName);
     config.AddCommand<Scrap>("scrap");
+    config.AddCommand<Keywords>("keywords");
 
 #if DEBUG
     config.PropagateExceptions();
 #endif
 });
+
+#if DEBUG
+if (args.Length == 0)
+{
+    var command = Prompt(
+        new SelectionPrompt<string>()
+            .Title("Command to run:")
+            .AddChoices([
+                "scrap",
+                "keywords",
+                "help"
+            ]));
+
+    args = new[] { command };
+}
+#endif
 
 //var key = config["OpenAI:Key"];
 //if (string.IsNullOrEmpty(key))

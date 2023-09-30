@@ -14,12 +14,13 @@ using static Spectre.Console.AnsiConsole;
 
 namespace MenosRelato;
 
-record Meta(string Name, string Content, string? Lang);
-record Publication(string Handle, DateOnly Date, List<Meta> Metadata);
-record Publications(string Topic, string Area, int Quantity);
-
 partial class PublicationsAnalyzer(IAgentService agent)
 {
+    record Meta(string Name, string Content, string? Lang);
+    record Publication(string Handle, DateOnly Date, List<Meta> Metadata);
+    record Publications(string Topic, string Area, int Quantity);
+
+
     // Research areas according to https://www.conicet.gov.ar/wp-content/uploads/Nomina-de-RRHH-a-Dic-2022.xlsx
     static Dictionary<string, string> areas = new Dictionary<string, string>
     {
