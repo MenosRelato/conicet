@@ -1,11 +1,21 @@
 name: pages
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+      
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+  
 jobs:
-  gh-pages:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: 🤘 checkout
@@ -21,19 +31,18 @@ jobs:
         working-directory: docs
         run: bundle exec jekyll build
 
-      - name: ✓ commit
-        run: |
-          cd docs/_site
-          git init
-          git add -A
-          git config --local user.email "info@menosrelato.org"
-          git config --local user.name "GitHub Action"
-          git commit -m "Publish pages from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:9}"
-
-      - name: 🚀 push
-        uses: ad-m/github-push-action@v0.6.0
+      - name: ⤴️ upload
+        uses: actions/upload-pages-artifact@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          force: true
-          directory: ./docs/_site
+          path: docs/_site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
