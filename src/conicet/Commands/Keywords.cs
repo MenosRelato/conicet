@@ -119,12 +119,12 @@ public partial class Keywords(ResiliencePipeline resilience, IHttpClientFactory 
         Status().Start("Guardando articulos...", _ => File.WriteAllText(Path.Combine(Constants.DefaultCacheDir, $"{fileName}.json"),
             JsonSerializer.Serialize(articles, ScrapGenerationContext.JsonOptions)));
 
-        //Status().Start("Guardando temas...", _ => File.WriteAllText(Path.Combine(Constants.DefaultCacheDir, $"{area.Id}-{area.Name}.json") , 
-        //    JsonSerializer.Serialize(new
-        //    {
-        //        Area = area,
-        //        Keywords = keywords.OrderByDescending(x => x.Value).Select(x => new { x.Key, x.Value }).ToList()
-        //    }, ScrapGenerationContext.JsonOptions)));
+        Status().Start("Guardando temas...", _ => File.WriteAllText(Path.Combine(Constants.DefaultCacheDir, $"{area.Id}-{area.Name}.json"),
+            JsonSerializer.Serialize(new
+            {
+                Area = area,
+                Keywords = keywords.OrderByDescending(x => x.Value).Select(x => new { x.Key, x.Value }).ToList()
+            }, ScrapGenerationContext.JsonOptions)));
 
         //Status().Start("Guardando linea de tiempo...", _ =>
         //{

@@ -95,7 +95,7 @@ public partial class Scrap(ResiliencePipeline resilience, IHttpClientFactory fac
                         await new Fetch(resilience, factory).ExecuteAsync(context, new Fetch.Settings 
                         {
                             Area = area,
-                            Uri = new(articleUrl) 
+                            Uri = new(articleUrl, UriKind.RelativeOrAbsolute) 
                         });
                     }
                 }
