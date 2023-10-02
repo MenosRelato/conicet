@@ -14,7 +14,6 @@ jobs:
       - name: ⚙ jekyll
         working-directory: docs
         run: |
-            sudo gem update --system  
             sudo gem install bundler
             sudo bundle install
 
