@@ -33,13 +33,10 @@ loadData();
 
 function createClouds() {
   let cloudData = prepareCloudData();
-  var data = cloudData.years.items.map(function (word) { return { x: word.text, percent: Math.round(word.weight * 100) / 100, value: word.count }; });
+  var years = cloudData.years.items.map(function (word) { return { x: word.text, percent: Math.round(word.weight * 100) / 100, value: word.count }; });
 
-  var chart = anychart.tagCloud(data);
-  chart.angles([0])
-
-  var tooltip = chart.tooltip();
-  tooltip.format("{%value} publicaciones");
+  var chart = anychart.tagCloud(years);
+  configureChart(chart);
   
   chart.listen("pointClick", function(e){
     filterYear(e.point.get("x"));
@@ -49,16 +46,11 @@ function createClouds() {
   chart.container("years");
   chart.draw();
 
-  data = cloudData.tags.items.map(function (word) { return { x: word.text, percent: Math.round(word.weight * 100) / 100, value: word.count }; });  
-  data.sort((a, b) => b.value - a.value);
-  data = data.slice(0, 50);
-  chart = anychart.tagCloud(data);
-  chart.angles([0])
-  chart.textSpacing(5);
-  //chart.scale(anychart.scales.log());
-
-  var tooltip = chart.tooltip();
-  tooltip.format("{%value} publicaciones");
+  var tags = cloudData.tags.items.map(function (word) { return { x: word.text, percent: Math.round(word.weight * 100) / 100, value: word.count }; });  
+  tags.sort((a, b) => b.value - a.value);
+  tags = tags.slice(0, 50);
+  chart = anychart.tagCloud(tags);
+  configureChart(chart);
 
   chart.listen("pointClick", function(e){
     filterTag(e.point.get("x"));
@@ -69,6 +61,14 @@ function createClouds() {
   chart.draw();
 }
 
+function configureChart(chart) {
+  chart.angles([0])
+  chart.textSpacing(5);
+
+  var tooltip = chart.tooltip();
+  tooltip.format("{%value} publicaciones");
+}
+
 function updateClouds() {
   createClouds();
 }
@@ -77,7 +77,7 @@ function prepareCloudData() {
   let years = {};
   let tags = {};
 
-  data.forEach(item => {
+  window.data.forEach(item => {
     if (!window.tag || item.tags.includes(window.tag)) {
       years[item.year] = (years[item.year] || 0) + 1;
     }
@@ -89,7 +89,7 @@ function prepareCloudData() {
     }
   });
 
-  let filtered = data;
+  let filtered = window.data;
   if (window.year) {
     filtered = filtered.filter(item => item.year == window.year);
   }
@@ -160,6 +160,6 @@ function doSearch() {
     searches.push({ field: 'year', operator: 'is', value: year });
   }
 
-  grid.search(searches, 'AND');
+  window.grid.search(searches, 'AND');
   updateClouds();
 }
