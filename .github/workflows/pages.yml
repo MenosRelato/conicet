@@ -1,0 +1,39 @@
+name: pages
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🤘 checkout
+        uses: actions/checkout@v2
+
+      - name: ⚙ jekyll
+        run: |
+          sudo gem install bundler
+          bundle install
+
+      - name: 🙏 build
+        run: bundle exec jekyll build
+        working-directory: docs
+
+      - name: ✓ commit
+        run: |
+          cd docs/_site
+          git init
+          git add -A
+          git config --local user.email "info@menosrelato.org"
+          git config --local user.name "GitHub Action"
+          git commit -m "Publish pages from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:9}"
+
+      - name: 🚀 push
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          branch: gh-pages
+          force: true
+          directory: ./docs/_site
