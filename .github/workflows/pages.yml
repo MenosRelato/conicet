@@ -29,7 +29,7 @@ jobs:
 
       - name: 🙏 build
         working-directory: docs
-        run: bundle exec jekyll build
+        run: bundle exec jekyll build --baseurl /conicet
 
       - name: ⤴️ upload
         uses: actions/upload-pages-artifact@v2
