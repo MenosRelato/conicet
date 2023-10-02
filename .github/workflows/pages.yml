@@ -12,13 +12,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: ⚙ jekyll
+        working-directory: docs
         run: |
           sudo gem install bundler
           bundle install
 
       - name: 🙏 build
-        run: bundle exec jekyll build
         working-directory: docs
+        run: bundle exec jekyll build
 
       - name: ✓ commit
         run: |
