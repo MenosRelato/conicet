@@ -1,0 +1,67 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    {% capture title %}
+      {%- if page.title -%}
+        {{ page.title | strip_html | xml_escape  }}
+      {%- else -%}
+        {{ site.title | strip_html | xml_escape }}
+      {%- endif -%}
+    {% endcapture %}
+  
+    {% capture description %}
+      {%- if page.subtitle -%}
+        {{ page.subtitle | strip_html | xml_escape }}
+      {%- else -%}
+        {%- assign excerpt_length = site.excerpt_length | default: 50 -%}
+        {{ page.content | strip_html | xml_escape | truncatewords: excerpt_length | strip }}
+      {%- endif -%}
+    {% endcapture %}
+  
+    <title>{{ title }}</title>
+
+    {% if site.favicon %}
+      {% if site.favicon contains '://' %}
+      <link rel="shortcut icon" href="{{ site.favicon }}">
+      {% else %}
+      <link rel="shortcut icon" href="{{ site.favicon | relative_url }}">
+      {% endif %}
+    {% endif %}
+
+    {% if site.author %}
+    <meta name="author" content="{{ site.author }}">
+    {% endif %}
+  
+    <meta name="description" content="{{ description }}">
+  
+    {% if site.keywords %}
+    <meta name="keywords" content="{{ site.keywords }}">
+    {% endif %}
+     
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+ 
+    {% if site.css %}
+      {% for css in site.css %}
+        {% if css contains '://' %}
+        <link href="{{ css }}" rel="stylesheet" type="text/css" />
+        {% else %}
+        <link href="{{ css | relative_url}}" rel="stylesheet" type="text/css" />
+        {% endif %}
+      {% endfor %}
+    {% endif %}    
+
+    {% if page.css %}
+      {% for css in page.css %}
+        {% if css contains '://' %}
+        <link href="{{ css }}" rel="stylesheet" type="text/css" />
+        {% else %}
+        <link href="{{ css | relative_url}}" rel="stylesheet" type="text/css" />
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% include gtag.html %}
+  </head>
+  

@@ -1,0 +1,19 @@
+{% if site.js %}
+  {% for js in site.js %}
+    {% if js contains '://' %}
+    <script src="{{ js }}"></script>
+    {% else %}
+    <script src="{{ js | relative_url }}"></script>
+    {% endif %}
+  {% endfor %}
+{% endif %}    
+
+{% if page.js %}
+  {% for js in page.js %}
+    {% if js contains '://' %}
+    <script src="{{ js }}"></script>
+    {% else %}
+    <script src="{{ js | relative_url }}"></script>
+    {% endif %}
+  {% endfor %}
+{% endif %}    

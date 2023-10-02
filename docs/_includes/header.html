@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{{ site.url }}">
+            <i class="fa-solid fa-house"></i>&nbsp;&nbsp;{{ site.title }}
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                {% assign pages = site.pages | sort: 'order' %}
+                {% for item in pages %}
+                    {% if item.url == page.url %}
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="{{ item.url | relative_url }}">{{ item.title }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <ul class="navbar-nav" style="color: yellow">
+                {% for network in site.networks %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ network.url }}" title="{{ network.title }}" target="_blank" rel="noopener">
+                        {% include {{ network.icon }} %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</nav>
