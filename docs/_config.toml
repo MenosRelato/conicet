@@ -17,6 +17,7 @@ js = [
   "https://cdn.anychart.com/releases/v8/js/anychart-base.min.js",
   "https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js",
   "https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.8/handlebars.min.js",
 ]
 
 networks = [

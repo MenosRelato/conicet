@@ -1,35 +1,71 @@
 
 let grid = new w2grid({
-name: 'grid',
-box: "#main",
-show: {
-    footer: true,
-    toolbar: true,
-    lineNumbers : true
-},
-method: 'GET',
-columns: [
-    { field: 'title', text: 'Titulo', size: '50%',  resizable: true, sortable: true, searchable: 'text',
-        render: function(record) {
-        return `<a href="${record.url}" target="_blank">${record.title}</a>`
+  name: 'grid',
+  box: "#main",
+  show: {
+      footer: true,
+      toolbar: true,
+      lineNumbers : true
+  },
+  method: 'GET',
+  columns: [
+      { field: 'title', text: 'Titulo', size: '50%',  resizable: true, sortable: true, searchable: 'text',
+          render: function(record) {
+          return `<a href="${record.url}" target="_blank">${record.title}</a>`
+          }
+      },
+      { field: 'tags', text: 'Temas', size: '35%',  resizable: true, sortable: true, searchable: 'text',
+          render: function(record) {
+          // render each tag as a span with the class 'tag'
+          return record.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')
+          }
+      },
+      { field: 'year', text: 'Año', size: '60px', sortable: true, searchable: 'int', style: 'text-align: center' }
+  ],
+  //fixedBody: false,
+  recid: "id",
+  statusRecordID: false,
+  textSearch: 'contains',
+  onClick(event) {
+    console.log(event)
+    event.done(() => {
+        var sel = this.getSelection()
+        if (sel.length == 1) {
+          var id = sel[0]
+          const modal = bootstrap.Modal.getInstance(document.getElementById('details'));
+          $('#details-body').html('<div class="spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>');
+          modal.show();
+
+          fetch(`https://menosrelato.blob.core.windows.net/conicet/pubs/${id}.json`)
+          .then(response => response.json())
+          .then(json => {
+            var html = window.renderDetails(json);
+            $('#details-body').html(html);
+          });
         }
-    },
-    { field: 'tags', text: 'Temas', size: '35%',  resizable: true, sortable: true, searchable: 'text',
-        render: function(record) {
-        // render each tag as a span with the class 'tag'
-        return record.tags.map(tag => `<span class="tag">${tag}</span>`).join(' ')
-        }
-    },
-    { field: 'year', text: 'Año', size: '60px', sortable: true, searchable: 'int', style: 'text-align: center' }
-],
-//fixedBody: false,
-recid: "id",
-statusRecordID: false,
-textSearch: 'contains'
+    })
+  }  
 });
 
 window.grid = grid;
 loadData();
+
+(function() {
+  window.detailsTemplate = document.getElementById('details-template').innerHTML;
+  window.renderDetails = Handlebars.compile(window.detailsTemplate);
+
+  const detailsModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('details'), { 
+      keyboard: true,
+      backdrop: true
+  });
+  
+  document.addEventListener('keydown', function(event) {
+    console.log(event);
+      if (event.key === 'Escape' || event.keyCode === 27) {
+          detailsModal.hide();
+      }
+  });  
+})();
 
 function createClouds() {
   let cloudData = prepareCloudData();
