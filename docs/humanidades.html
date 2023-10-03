@@ -1,24 +1,8 @@
 ---
 title: Humanidades
 layout: data
-order: 2
+order: 4
+data: https://menosrelato.blob.core.windows.net/conicet/225-HUMANIDADES.json
 js: 
   - /assets/js/data.js
 ---
-<script>
-function loadData() {
-  fetch('https://menosrelato.blob.core.windows.net/conicet/225-HUMANIDADES.json')
-    .then(response => response.json())
-    .then(data => {
-      window.data = data;
-      window.grid.records = data;
-      window.grid.sort('year', 'desc');
-      window.grid.reload();
-
-      window.year = null;
-      window.tag = null;
-
-      createClouds();
-    });
-}
-</script>

@@ -58,6 +58,23 @@
         </table>
     </script>
     {% endraw %}
+    <script>
+        function loadData() {
+          fetch('{{ page.data }}')
+            .then(response => response.json())
+            .then(data => {
+              window.data = data;
+              window.grid.records = data;
+              window.grid.sort('year', 'desc');
+              window.grid.reload();
+        
+              window.year = null;
+              window.tag = null;
+        
+              createClouds();
+            });
+        }
+    </script>    
     {% include scripts.html %}
     {% include footer.html %}
   </body>
