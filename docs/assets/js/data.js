@@ -78,7 +78,6 @@ function createClouds() {
     filterYear(e.point.get("x"));
   });
 
-  $('#years').empty();
   chart.container("years");
   chart.draw();
 
@@ -92,9 +91,10 @@ function createClouds() {
     filterTag(e.point.get("x"));
   });
 
-  $('#tags').empty();
   chart.container("tags");
   chart.draw();
+
+  $("#loading").hide();
 }
 
 function configureChart(chart) {
@@ -103,10 +103,6 @@ function configureChart(chart) {
 
   var tooltip = chart.tooltip();
   tooltip.format("{%value} publicaciones");
-}
-
-function updateClouds() {
-  createClouds();
 }
 
 function prepareCloudData() {
@@ -187,15 +183,20 @@ function filterTag(value) {
 }
 
 function doSearch() {
-  var searches = [];
-  if (tag) {
-    searches.push({ field: 'tags', operator: 'contains', value: tag });
-  }
-
-  if (year) {
-    searches.push({ field: 'year', operator: 'is', value: year });
-  }
-
-  window.grid.search(searches, 'AND');
-  updateClouds();
+  $('#years').empty();
+  $('#tags').empty();
+  $("#loading").show();
+  setTimeout(() => {
+    createClouds();
+    var searches = [];
+    if (tag) {
+      searches.push({ field: 'tags', operator: 'contains', value: tag });
+    }
+  
+    if (year) {
+      searches.push({ field: 'year', operator: 'is', value: year });
+    }
+  
+    window.grid.search(searches, 'AND');
+  }, 200);
 }
