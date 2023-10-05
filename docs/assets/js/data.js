@@ -1,3 +1,4 @@
+const spinner = '<div class="spinner spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>';
 
 let grid = new w2grid({
   name: 'grid',
@@ -33,7 +34,7 @@ let grid = new w2grid({
         if (sel.length == 1) {
           var id = sel[0]
           const modal = bootstrap.Modal.getInstance(document.getElementById('details'));
-          $('#details-body').html('<div class="spinner spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>');
+          $('#details-body').html(spinner);
           modal.show();
 
           fetch(`https://menosrelato.blob.core.windows.net/conicet/pubs/${id}.json`)
@@ -186,8 +187,8 @@ function filterTag(value) {
 
 function doSearch() {
   $('#content').addClass('busy');
-  $('#years').html('<div class="spinner spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>');
-  $('#tags').html('<div class="spinner spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>');
+  $('#years').html(spinner);
+  $('#tags').html(spinner);
 
   setTimeout(() => {
     createClouds();
