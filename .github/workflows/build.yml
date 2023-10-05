@@ -5,12 +5,20 @@ on:
     branches:
       - main
   
+env:
+  SdkVersion: 8.0.100-rc.1.23463.5
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: 🤘 checkout
         uses: actions/checkout@v2
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.SdkVersion }}
+          dotnet-quality: 'preview'
 
       - name: 📦 pack
         run: dotnet pack -m:1
