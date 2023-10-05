@@ -60,7 +60,7 @@
     {% endraw %}
     <script>
         function loadData() {
-          fetch('${{ site.storage }}{{ page.data }}')
+          fetch('{{ site.storage }}{{ page.data }}')
             .then(response => response.json())
             .then(data => {
               window.data = data;
