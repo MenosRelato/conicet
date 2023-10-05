@@ -27,23 +27,43 @@ let grid = new w2grid({
   recid: "id",
   statusRecordID: false,
   textSearch: 'contains',
+  onSearch: function(event) {
+    console.log(event);
+    event.done(() => {
+      this.searchData.forEach(search => {
+        if (search.field == 'year') {
+          window.year = search.value;
+        }
+        if (search.field == 'tags') {
+          window.tag = search.value;
+        }
+      });
+
+      $('#content').addClass('busy');
+      $('#years').html(spinner);
+      $('#tags').html(spinner);
+      setTimeout(() => {
+        createClouds();
+      }, 300);
+    });
+  },
   onClick(event) {
     console.log(event)
     event.done(() => {
-        var sel = this.getSelection()
-        if (sel.length == 1) {
-          var id = sel[0]
-          const modal = bootstrap.Modal.getInstance(document.getElementById('details'));
-          $('#details-body').html(spinner);
-          modal.show();
+      var sel = this.getSelection()
+      if (sel.length == 1) {
+        var id = sel[0]
+        const modal = bootstrap.Modal.getInstance(document.getElementById('details'));
+        $('#details-body').html(spinner);
+        modal.show();
 
-          fetch(`https://menosrelato.blob.core.windows.net/conicet/pubs/${id}.json`)
-          .then(response => response.json())
-          .then(json => {
-            var html = window.renderDetails(json);
-            $('#details-body').html(html);
-          });
-        }
+        fetch(`https://menosrelato.blob.core.windows.net/conicet/pubs/${id}.json`)
+        .then(response => response.json())
+        .then(json => {
+          var html = window.renderDetails(json);
+          $('#details-body').html(html);
+        });
+      }
     })
   }  
 });
@@ -191,7 +211,6 @@ function doSearch() {
   $('#tags').html(spinner);
 
   setTimeout(() => {
-    createClouds();
     var searches = [];
     if (tag) {
       searches.push({ field: 'tags', operator: 'contains', value: tag });
