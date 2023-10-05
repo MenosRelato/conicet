@@ -54,3 +54,7 @@
     height: 24px !important;
     background-color: transparent !important;
 }
+
+.w2ui-btn.grid-search-btn[data-click=searchSave] {
+    display: none;
+}
