@@ -10,13 +10,13 @@ using static Spectre.Console.AnsiConsole;
 
 namespace MenosRelato.Commands;
 
-[Description("Refrescar metadata de un articulo especifico")]
+[Description("Refrescar metadata de un artículo específico")]
 public class FetchCommand(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<FetchCommand.Settings>
 {
     public class Settings : CommandSettings
     {
         [CommandArgument(0, "[URL]")]
-        [Description("URL del articulo a refrescar")]
+        [Description("URL del artículo a refrescar")]
         public Uri Uri { get; set; } = default!;
 
         public Area? Area { get; set; }

@@ -3,7 +3,7 @@ using Spectre.Console.Cli;
 
 namespace MenosRelato.Commands;
 
-[Description("Sincroniza todos los articulos de todas las categorias")]
+[Description("Sincroniza todos los artículos de todas las categorías")]
 public class SyncCommand(ICommandApp app) : AsyncCommand
 {
     public override async Task<int> ExecuteAsync(CommandContext context)

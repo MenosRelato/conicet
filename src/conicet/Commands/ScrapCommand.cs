@@ -9,7 +9,7 @@ using static Spectre.Console.AnsiConsole;
 
 namespace MenosRelato.Commands;
 
-[Description("Descarga articulos por area de conocimiento")]
+[Description("Descarga artículos por área de conocimiento")]
 public partial class ScrapCommand(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<ScrapCommand.Settings>
 {
     // Add command settings allowing skipping pages

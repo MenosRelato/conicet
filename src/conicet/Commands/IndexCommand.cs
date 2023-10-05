@@ -9,13 +9,13 @@ using static Spectre.Console.AnsiConsole;
 
 namespace MenosRelato.Commands;
 
-[Description("Generar indice por area de conocimiento")]
+[Description("Generar índice por área de conocimiento")]
 public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<IndexCommand.Settings>
 {
     public class Settings : CommandSettings
     {
         [CommandOption("-a|--all")]
-        [Description("Indexar todas las categorias")]
+        [Description("Indexar todas las categorías")]
         public bool All { get; init; }
     }
 
