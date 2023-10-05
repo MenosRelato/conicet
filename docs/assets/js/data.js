@@ -94,7 +94,7 @@ function createClouds() {
   chart.container("tags");
   chart.draw();
 
-  $("#loading").hide();
+  $('body').removeClass('busy');
 }
 
 function configureChart(chart) {
@@ -185,7 +185,8 @@ function filterTag(value) {
 function doSearch() {
   $('#years').empty();
   $('#tags').empty();
-  $("#loading").show();
+  $('body').addClass('busy');
+
   setTimeout(() => {
     createClouds();
     var searches = [];
