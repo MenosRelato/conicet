@@ -12,7 +12,7 @@ using static Spectre.Console.AnsiConsole;
 namespace MenosRelato.Commands;
 
 [Description("Popular una base de datos SQLite con los articulos descargados.")]
-public partial class Populate(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<Populate.Settings>
+public partial class PopulateCommand(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<PopulateCommand.Settings>
 {
     public class Settings : CommandSettings
     {
@@ -41,7 +41,7 @@ public partial class Populate(ResiliencePipeline resilience, IHttpClientFactory 
         public List<Meta> Meta { get; init; } = new();
     }
 
-    static Populate()
+    static PopulateCommand()
     {
         SqlMapper.AddTypeHandler(new DateTimeOffsetHandler());
         SqlMapper.AddTypeHandler(new DateOnlyHandler());
@@ -91,7 +91,7 @@ public partial class Populate(ResiliencePipeline resilience, IHttpClientFactory 
 
                 if (item.Area is null || item.Authors.Count == 0)
                 {
-                    await Status().StartAsync($"Fetching {item.Handle}...", async _ => await new Fetch(resilience, factory).ExecuteAsync(context, new Fetch.Settings
+                    await Status().StartAsync($"Fetching {item.Handle}...", async _ => await new FetchCommand(resilience, factory).ExecuteAsync(context, new FetchCommand.Settings
                     {
                         Area = item.Area,
                         Uri = new(item.Handle)
@@ -167,8 +167,7 @@ public partial class Populate(ResiliencePipeline resilience, IHttpClientFactory 
                 {
                     foreach (var author in item.Authors)
                     {
-                        var authorId = db.Query<string>("select id from author where name = @name", new { name = author.Name }).FirstOrDefault();
-                        if (authorId is null)
+                        if (db.Query<string>("select id from author where id = @id", new { id = author.Id }).FirstOrDefault() is null)
                         {
                             var profile = await resilience.ExecuteAsync(async c => HtmlDocument.Load(await http.GetStreamAsync("author/" + author.Id, c)));
                             string? title = null;
@@ -210,8 +209,7 @@ public partial class Populate(ResiliencePipeline resilience, IHttpClientFactory 
                 {
                     foreach (var author in item.Collaborators)
                     {
-                        var authorId = db.Query<string>("select id from author where name = @name", new { name = author.Name }).FirstOrDefault();
-                        if (authorId is null)
+                        if (db.Query<string>("select id from author where id = @id", new { id = author.Id }).FirstOrDefault() is null)
                         {
                             var profile = await resilience.ExecuteAsync(async c => HtmlDocument.Load(await http.GetStreamAsync("author/" + author.Id, c)));
                             string? title = null;

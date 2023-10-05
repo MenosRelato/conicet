@@ -11,7 +11,7 @@ using static Spectre.Console.AnsiConsole;
 namespace MenosRelato.Commands;
 
 [Description("Refrescar metadata de un articulo especifico")]
-public class Fetch(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<Fetch.Settings>
+public class FetchCommand(ResiliencePipeline resilience, IHttpClientFactory factory) : AsyncCommand<FetchCommand.Settings>
 {
     public class Settings : CommandSettings
     {
@@ -31,6 +31,9 @@ public class Fetch(ResiliencePipeline resilience, IHttpClientFactory factory) : 
 
         var articleUrl = settings.Uri.ToString();
         var articleFile = Path.Combine(cache, string.Join('-', articleUrl.Split('/').ToArray()[^2..]) + ".json");
+
+        // NOTE: Fetch CANNOT do Status() since it's called from other commands.
+
         var article = await resilience.ExecuteAsync(async c => HtmlDocument.Load(await http.GetStreamAsync(settings.Uri, c)));
 
         var meta = article.CssSelectElements("head meta")
@@ -75,6 +78,18 @@ public class Fetch(ResiliencePipeline resilience, IHttpClientFactory factory) : 
             return -1;
         }
 
+        var authors = article.CssSelectElements(".simple-item-view-authors > a")
+            .Select(x => new { Name = x.Value.Trim().Trim('"').Trim(), Url = x.Attribute("href")?.Value ?? "" })
+            .Where(x => x.Url.StartsWith("/author/"))
+            .Select(x => new Author(x.Url.Split('/')[^1], x.Name))
+            .ToList();
+
+        var collab = article.CssSelectElements(".simple-item-view-authors > div > a")
+            .Select(x => new { Name = x.Value.Trim().Trim('"').Trim(), Url = x.Attribute("href")?.Value ?? "" })
+            .Where(x => x.Url.StartsWith("/author/"))
+            .Select(x => new Author(x.Url.Split('/')[^1], x.Name))
+            .ToList();
+
         var area = settings.Area;
 
         if (area == null)
@@ -97,7 +112,12 @@ public class Fetch(ResiliencePipeline resilience, IHttpClientFactory factory) : 
             area = Area.Create(subject.Content);
         }
 
-        var pub = new Item(area, title, handle.Content, date, meta);
+        var pub = new Item(area, title, handle.Content, date, meta)
+        {
+            Authors = authors,
+            Collaborators = collab,
+        };
+
         File.WriteAllText(articleFile, JsonSerializer.Serialize(pub, ScrapGenerationContext.JsonOptions));
 
         return 0;

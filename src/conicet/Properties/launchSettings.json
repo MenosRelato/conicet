@@ -2,7 +2,7 @@
   "profiles": {
     "conicet": {
       "commandName": "Project",
-      "commandLineArgs": ""
+      "commandLineArgs": "populate"
     }
   }
 }

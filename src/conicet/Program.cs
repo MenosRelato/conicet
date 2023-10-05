@@ -6,7 +6,6 @@ using Polly.Retry;
 using Polly;
 using Spectre.Console.Cli;
 using static Spectre.Console.AnsiConsole;
-using Spectre.Console;
 using MenosRelato;
 
 var config = new ConfigurationManager()
@@ -47,8 +46,11 @@ services.AddSingleton<ICommandApp>(app);
 app.Configure(config =>
 {
     config.SetApplicationName(ThisAssembly.Project.ToolCommandName);
-    config.AddCommand<Scrap>("scrap");
-    config.AddCommand<Keywords>("keywords");
+    config.AddCommand<ScrapCommand>("scrap");
+    config.AddCommand<FetchCommand>("fetch");
+    config.AddCommand<IndexCommand>("index");
+    config.AddCommand<SyncCommand>("sync");
+    //config.AddCommand<Populate>("populate");
 
 #if DEBUG
     config.PropagateExceptions();
@@ -62,6 +64,8 @@ if (args.Length == 0)
         new SelectionPrompt<string>()
             .Title("Command to run:")
             .AddChoices([
+                "populate",
+                "fetch",
                 "scrap",
                 "keywords",
                 "help"
@@ -70,14 +74,5 @@ if (args.Length == 0)
     args = new[] { command };
 }
 #endif
-
-//var key = config["OpenAI:Key"];
-//if (string.IsNullOrEmpty(key))
-//{
-//    MarkupLine("[red]x[/] Missing OpenAI:Key secret");
-//    return -1;
-//}
-
-//await new PublicationsAnalyzer(agent).RunAsync();
 
 return app.Run(args);

@@ -7,7 +7,8 @@ namespace MenosRelato.Commands.Cache;
 [JsonSerializable(typeof(Item))]
 [JsonSerializable(typeof(Meta))]
 [JsonSerializable(typeof(Area))]
-[JsonSerializable(typeof(List<Meta>))]
+[JsonSerializable(typeof(Author))]
+[JsonSerializable(typeof(List<Author>))]
 public partial class ScrapGenerationContext : JsonSerializerContext
 {
     public static JsonSerializerOptions JsonOptions { get; } = new JsonSerializerOptions(JsonSerializerDefaults.Web)
@@ -24,5 +25,10 @@ public record Area(int Id, string Name)
     public static Area Create(string name) => new(name.ToSubject(), name);
 }
 
+public record Author(string Id, string Name);
 public record Meta(string Name, string Content, string? Lang);
-public record Item(Area Area, string Title, string Handle, DateOnly Date, List<Meta> Metadata);
+public record Item(Area Area, string Title, string Handle, DateOnly Date, List<Meta> Metadata)
+{
+    public List<Author> Authors { get; init; } = new();
+    public List<Author> Collaborators { get; init; } = new();
+}
