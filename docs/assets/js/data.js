@@ -95,6 +95,8 @@ function createClouds() {
   $('#tags').empty();
   chart.container("tags");
   chart.draw();
+
+  $('#content').removeClass('busy');
 }
 
 function configureChart(chart) {
@@ -183,6 +185,7 @@ function filterTag(value) {
 }
 
 function doSearch() {
+  $('#content').addClass('busy');
   $('#years').html('<div class="spinner spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>');
   $('#tags').html('<div class="spinner spinner-border text-warning" role="status"><span class="visually-hidden">Cargando...</span></div>');
 
@@ -197,6 +200,6 @@ function doSearch() {
       searches.push({ field: 'year', operator: 'is', value: year });
     }
   
-    window.grid.search(searches, 'AND');
+    window.grid.search(searches, 'AND');    
   }, 200);
 }
