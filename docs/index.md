@@ -42,4 +42,3 @@ Todo el proceso de extracción de datos y generación de este sitio está
 disponible como código abierto en [GitHub](https://github.com/MenosRelato/conicet) 
 y puede ser ejecutado completamente local para replicar los datos directamente 
 de la fuente.
-
