@@ -16,7 +16,10 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.AI.OpenAI" Version="1.0.0-beta.8" />
+    <PackageReference Include="CliWrap" Version="3.6.4" />
     <PackageReference Include="Dapper" Version="2.1.4" />
+    <PackageReference Include="Humanizer.Core.es" Version="2.14.1" />
+    <PackageReference Include="Microsoft.Azure.Storage.DataMovement" Version="2.0.4" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.11" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(DotNetVersion)" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(DotNetVersion)" />

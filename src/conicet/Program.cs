@@ -7,6 +7,7 @@ using Polly;
 using Spectre.Console.Cli;
 using static Spectre.Console.AnsiConsole;
 using MenosRelato;
+using Spectre.Console;
 
 var config = new ConfigurationManager()
     .AddUserSecrets(ThisAssembly.Project.UserSecretsId)
@@ -46,11 +47,11 @@ services.AddSingleton<ICommandApp>(app);
 app.Configure(config =>
 {
     config.SetApplicationName(ThisAssembly.Project.ToolCommandName);
-    config.AddCommand<ScrapCommand>("scrap");
     config.AddCommand<FetchCommand>("fetch");
     config.AddCommand<IndexCommand>("index");
+    config.AddCommand<ScrapCommand>("scrap");
     config.AddCommand<SyncCommand>("sync");
-    //config.AddCommand<Populate>("populate");
+    config.AddCommand<UploadCommand>("upload");
 
 #if DEBUG
     config.PropagateExceptions();
@@ -64,10 +65,11 @@ if (args.Length == 0)
         new SelectionPrompt<string>()
             .Title("Command to run:")
             .AddChoices([
-                "populate",
                 "fetch",
+                "index",
                 "scrap",
-                "keywords",
+                "sync",
+                "upload",
                 "help"
             ]));
 

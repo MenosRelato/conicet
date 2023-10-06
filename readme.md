@@ -30,6 +30,7 @@ COMMANDS:
     fetch    Refrescar metadata de un artículo específico
     index    Generar índice por área de conocimiento
     sync     Sincroniza todos los artículos de todas las categorías
+    upload   Sube los datos descargados a Azure Blob storage
 ```
 
 ## Descarga de datos
@@ -55,6 +56,9 @@ jekyll serve --incremental
 Los datos descargados previamente, deben subirse a alguna cuenta de Azure 
 Blob Storage, por ejemplo utilizando el [Explorador de Azure Storage](https://azure.microsoft.com/es-es/products/storage/storage-explorer/).
 
-Se debe subir el contenido completo de la carpeta `%AppData%\MenosRelato\conicet` y 
-actualizar el archivo `docs/_config.toml` para que la propiedad `storage` coincida 
-con la URL de su blob storage container.
+Alternativamente, el comando `upload <storage>` permite especificar el 
+connection string de la cuenta de Azure Blob Storage de destino y subir
+todos los datos automaticamente a un container de nombre `conicet`.
+
+Posteriormente, se debe actualizar el archivo `docs/_config.toml` para que 
+la propiedad `storage` coincida con la URL de su cuenta de blob storage.
