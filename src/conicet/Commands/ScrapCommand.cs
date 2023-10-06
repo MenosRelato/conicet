@@ -30,25 +30,7 @@ public partial class ScrapCommand(ResiliencePipeline resilience, IHttpClientFact
     {
         using var http = factory.CreateClient();
 
-        var doc = await resilience.ExecuteAsync(async x => HtmlDocument.Load(await http.GetStreamAsync("/subject/", x)));
-        var areas = doc.CssSelectElements("#aspect_conicet_VerArea_list_nivel1 .ds-simple-list-item")
-            .Select(x => x.CssSelectElements("span").Select(s => s.Value).ToArray())
-            .Where(x => x.Length == 2)
-            .Select(x => new ScrapArea(x[0].ToSubject(), x[0], int.Parse(x[1].Trim('[', ']'))))
-            .ToList();
-
-        if (!settings.All)
-        {
-            var prompt = new SelectionPrompt<string>().Title("Area a descargar:");
-            foreach (var item in areas)
-            {
-                prompt.AddChoice($"{item.Name} ({item.Count})");
-            }
-
-            var selected = Prompt(prompt);
-            areas.RemoveAll(x => selected.StartsWith(x.Name));
-        }
-
+        var areas = await factory.SelectAreasAsync(resilience, settings.All);
         var cache = Path.Combine(Constants.DefaultCacheDir, "pubs");
         Directory.CreateDirectory(cache);
 
@@ -65,7 +47,7 @@ public partial class ScrapCommand(ResiliencePipeline resilience, IHttpClientFact
                 page++;
                 done = await Status().StartAsync($"Procesando {area.Name} ({current} of {area.Count})...", async c =>
                 {
-                    doc = await resilience.ExecuteAsync(async c => HtmlDocument.Load(
+                    var doc = await resilience.ExecuteAsync(async c => HtmlDocument.Load(
                         await http.GetStreamAsync($"/subject/{area.Id}?pagina={page}", c)));
 
                     var links = doc.CssSelectElements(".ds-artifact-item .artifact-title a");

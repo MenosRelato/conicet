@@ -95,21 +95,14 @@ public class FetchCommand(ResiliencePipeline resilience, IHttpClientFactory fact
         if (area == null)
         {
             // Match area from DC.subject
-            var doc = await resilience.ExecuteAsync(async x => HtmlDocument.Load(await http.GetStreamAsync("/subject/", x)));
-            var areas = doc.CssSelectElements("#aspect_conicet_VerArea_list_nivel1 .ds-simple-list-item")
-                .Select(x => x.CssSelectElements("span").Select(s => s.Value).ToArray())
-                .Where(x => x.Length == 2)
-                .Select(x => x[0])
-                .ToHashSet();
-
-            var subject = meta.FirstOrDefault(x => x.Name == "DC.subject" && areas.Contains(x.Content));
-            if (subject == null)
+            var areas = await factory.SelectAreasAsync(resilience, true);
+            var subjects = meta.Where(x => x.Name == "DC.subject").Select(x => x.Content.Sanitize()).ToHashSet();
+            area = areas.FirstOrDefault(x => subjects.Contains(x.Name));
+            if (area is null)
             {
                 WriteLine($"[red]x[/] {articleUrl} no tiene un area valida como 'DC.subject'");
                 return -1;
             }
-
-            area = Area.Create(subject.Content);
         }
 
         var pub = new Item(area, title, handle.Content, date, meta)

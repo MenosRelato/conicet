@@ -19,7 +19,6 @@ public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFact
         public bool All { get; init; }
     }
 
-    record ScrapArea(int Id, string Name, int Count) : Area(Id, Name);
     record Article(string Title, string Url, int Year, string[] Tags)
     {
         public string Id => string.Join('-', Url.Split('/')[^2..]);
@@ -28,28 +27,7 @@ public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFact
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        using var http = factory.CreateClient();
-
-        var doc = await resilience.ExecuteAsync(async x => HtmlDocument.Load(await http.GetStreamAsync("/subject/", x)));
-        var areas = doc.CssSelectElements("#aspect_conicet_VerArea_list_nivel1 .ds-simple-list-item")
-            .Select(x => x.CssSelectElements("span").Select(s => s.Value).ToArray())
-            .Where(x => x.Length == 2)
-            .Select(x => new ScrapArea(x[0].ToSubject(), x[0], int.Parse(x[1].Trim('[', ']'))))
-            .ToList();
-
-        if (!settings.All)
-        {
-            var prompt = new SelectionPrompt<string>().Title("Area a descargar:");
-            foreach (var item in areas)
-            {
-                prompt.AddChoice($"{item.Name} ({item.Count})");
-            }
-
-            var selected = Prompt(prompt);
-            areas.RemoveAll(x => selected.StartsWith(x.Name));
-        }
-
-
+        var areas = await factory.SelectAreasAsync(resilience, settings.All);
         var cache = Path.Combine(Constants.DefaultCacheDir, "pubs");
         Directory.CreateDirectory(cache);
 
@@ -57,8 +35,6 @@ public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFact
 
         foreach (var area in areas)
         {
-            var keywords = new Dictionary<string, long>();
-            var timeline = new Dictionary<string, Dictionary<int, long>>();
             var count = 0;
             await Status().StartAsync($"Procesando {area.Name}...", async c =>
             {
@@ -66,7 +42,7 @@ public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFact
                 {
                     if (JsonSerializer.Deserialize<Item>(File.ReadAllText(file), ScrapGenerationContext.JsonOptions) is { } item)
                     {
-                        if (item.Area is null)
+                        if (item.Area is null || item.Authors.Count == 0)
                         {
                             var title = item.Title ?? item.Metadata.FirstOrDefault(x => x.Name == "DC.title")?.Content ?? "";
                             title = new string(title.Take(80).ToArray()).Replace("[", "").Replace("]", "");
@@ -104,15 +80,6 @@ public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFact
                             .ToArray();
 
                         articles.Add(new(item.Title, item.Handle, item.Date.Year, values));
-
-                        foreach (var value in values)
-                        {
-                            keywords[value] = keywords.GetValueOrDefault(value) + 1;
-                            if (!timeline.TryGetValue(value, out var years))
-                                timeline[value] = years = new Dictionary<int, long>();
-
-                            years[item.Date.Year] = years.GetValueOrDefault(item.Date.Year) + 1;
-                        }
                     }
                 }
             });
@@ -122,7 +89,7 @@ public partial class IndexCommand(ResiliencePipeline resilience, IHttpClientFact
         {
             await Status().StartAsync($"Guardando articulos de {entry.Key.Name}...", async c =>
             {
-                var fileName = $"{entry.Key.Id}-{entry.Key.Name.Replace(" ", "_").Replace('É', 'E').Replace('Í', 'I')}";
+                var fileName = $"{entry.Key.Id}-{entry.Key.Name.Sanitize().Replace(" ", "_")}";
 
                 await File.WriteAllTextAsync(Path.Combine(Constants.DefaultCacheDir, $"{fileName}.json"),
                     JsonSerializer.Serialize(entry.Value, ScrapGenerationContext.JsonOptions));
