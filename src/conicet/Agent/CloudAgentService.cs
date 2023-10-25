@@ -15,10 +15,6 @@ public class CloudAgentService(IConfiguration configuration) : IAgentService
     public async Task<AgentResponse> ProcessAsync(AgentPrompt prompt, CancellationToken cancellation)
     {
         var useAzure = prompt.Model != "gpt-4";
-        //var userId = user.ǃ(Claims.Id);
-
-        // TODO: if user is from Argentina, use AR-financed model instead
-
         // Use Azure for 3.5 turbo, and OpenAI for the rest
         var client = useAzure
             ? new OpenAIClient(
